@@ -1,0 +1,195 @@
+@import url('variables.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    background-image:
+        radial-gradient(circle at 10% 20%, hsla(var(--hue-primary), 60%, 20%, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, hsla(var(--hue-secondary), 60%, 20%, 0.15) 0%, transparent 40%);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+h1 {
+    font-size: 3rem;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-primary);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Glassmorphism Cards */
+.card {
+    background: var(--color-surface-translucent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsla(220, 20%, 80%, 0.08);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg), var(--shadow-neon);
+    border-color: hsla(220, 20%, 80%, 0.2);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    font-family: var(--font-heading);
+}
+
+.btn-primary {
+    background: var(--gradient-main);
+    color: white;
+    box-shadow: 0 4px 15px hsla(var(--hue-primary), 60%, 40%, 0.4);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px hsla(var(--hue-primary), 60%, 40%, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Forms */
+input[type="file"] {
+    background: var(--color-surface);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid hsla(220, 20%, 80%, 0.1);
+    color: var(--color-text-muted);
+    width: 100%;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+input[type="file"]:hover {
+    border-color: var(--color-primary);
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    margin-top: 2rem;
+    border: 1px solid hsla(220, 20%, 80%, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: hsla(220, 25%, 12%, 0.4);
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid hsla(220, 20%, 80%, 0.05);
+}
+
+th {
+    background: hsla(220, 25%, 15%, 0.9);
+    position: sticky;
+    top: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+    font-family: var(--font-heading);
+}
+
+tr:hover {
+    background: hsla(220, 25%, 20%, 0.4);
+}
+
+/* Utilities */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.mt-2 {
+    margin-top: 2rem;
+}
+
+.mt-4 {
+    margin-top: 4rem;
+}
+
+.mb-2 {
+    margin-bottom: 2rem;
+}
+
+.grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.grid-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.flex {
+    display: flex;
+    gap: 1rem;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.items-center {
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}

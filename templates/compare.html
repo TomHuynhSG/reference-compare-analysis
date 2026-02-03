@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-2 flex justify-between items-center">
+    <h2>Comparison: <span style="color: var(--color-primary)">{{ filename_a }}</span> vs <span
+            style="color: var(--color-secondary)">{{ filename_b }}</span></h2>
+    <a href="/" class="btn" style="background: var(--color-surface); border: 1px solid var(--color-text-muted);">←
+        Back</a>
+</div>
+
+<!-- Comparison Stats -->
+<div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="card text-center" style="border-top: 4px solid var(--color-primary)">
+        <h4 style="color: var(--color-primary)">Unique to A</h4>
+        <h1 style="margin: 0;">{{ stats.unique_a_count }}</h1>
+        <small style="color: var(--color-text-muted)">{{ (stats.unique_a_count / stats.total_a * 100)|round(1) }}% of
+            A</small>
+    </div>
+    <div class="card text-center" style="border-top: 4px solid var(--color-accent)">
+        <h4 style="color: var(--color-accent)">Overlap</h4>
+        <h1 style="margin: 0;">{{ stats.overlap_count }}</h1>
+        <small style="color: var(--color-text-muted)">Common References</small>
+    </div>
+    <div class="card text-center" style="border-top: 4px solid var(--color-secondary)">
+        <h4 style="color: var(--color-secondary)">Unique to B</h4>
+        <h1 style="margin: 0;">{{ stats.unique_b_count }}</h1>
+        <small style="color: var(--color-text-muted)">{{ (stats.unique_b_count / stats.total_b * 100)|round(1) }}% of
+            B</small>
+    </div>
+</div>
+
+<!-- Venn Diagram Placeholder (Optional, using simple CSS circles could be cool, but sticking to detailed lists for now) -->
+
+<!-- Lists -->
+<div class="mt-2">
+    <!-- Accordion / Tabs could go here, for now just stacked sections -->
+
+    <div class="card mb-2">
+        <h3 style="color: var(--color-accent)">🔗 Overlap ({{ stats.overlap_count }})</h3>
+        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Year</th>
+                        <th>Authors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in overlap %}
+                    <tr>
+                        <td>{{ row.get('title', row.get('ti', 'N/A')) }}</td>
+                        <td>{{ row.get('year', row.get('py', 'N/A')) }}</td>
+                        <td>
+                            {% set authors = row.get('authors', row.get('au', [])) %}
+                            {% if authors is sequence and authors is not string %}
+                            {{ authors[:2]|join(', ') }}...
+                            {% else %}
+                            {{ authors }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h3 style="color: var(--color-primary)">Unique to {{ filename_a }}</h3>
+            <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in unique_a %}
+                        <tr>
+                            <td>{{ row.get('title', row.get('ti', 'N/A')) }}</td>
+                            <td>{{ row.get('year', row.get('py', 'N/A')) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="color: var(--color-secondary)">Unique to {{ filename_b }}</h3>
+            <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in unique_b %}
+                        <tr>
+                            <td>{{ row.get('title', row.get('ti', 'N/A')) }}</td>
+                            <td>{{ row.get('year', row.get('py', 'N/A')) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

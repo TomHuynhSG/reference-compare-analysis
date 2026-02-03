@@ -1,0 +1,30 @@
+:root {
+    /* Colors - HSL */
+    --hue-primary: 250; /* Deep Purple */
+    --hue-secondary: 320; /* Pink/Magenta */
+    --hue-accent: 180; /* Cyan */
+
+    --color-bg: hsl(220, 30%, 8%);
+    --color-surface: hsl(220, 25%, 12%);
+    --color-surface-translucent: hsla(220, 25%, 12%, 0.7);
+    
+    --color-primary: hsl(var(--hue-primary), 90%, 60%);
+    --color-secondary: hsl(var(--hue-secondary), 80%, 60%);
+    --color-accent: hsl(var(--hue-accent), 90%, 60%);
+
+    --color-text: hsl(220, 10%, 95%);
+    --color-text-muted: hsl(220, 10%, 70%);
+
+    /* Gradients */
+    --gradient-main: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    --gradient-surface: linear-gradient(145deg, hsla(220, 25%, 15%, 0.6), hsla(220, 25%, 10%, 0.6));
+    
+    /* Shadows */
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-neon: 0 0 15px hsla(var(--hue-primary), 70%, 50%, 0.4);
+
+    /* Typography */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}

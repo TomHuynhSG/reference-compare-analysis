@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mb-2">
+    <h2>Powerful Reference Analytics</h2>
+    <p style="color: var(--color-text-muted); max-width: 600px; margin: 0 auto;">
+        Upload your RIS files to instantly analyze authorship, publication trends, or compare datasets to find overlaps
+        and unique entries.
+    </p>
+</div>
+
+<div class="grid grid-2">
+    <!-- Analyze Section -->
+    <div class="card">
+        <h3>📊 Analyze RIS</h3>
+        <p class="mb-2" style="color: var(--color-text-muted);">Get detailed statistics, top authors, journals, and a
+            sortable database of your references.</p>
+
+        <form action="/analyze" method="post" enctype="multipart/form-data">
+            <label for="ris_file">Upload RIS File</label>
+            <input type="file" id="ris_file" name="ris_file" accept=".ris" required>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Analyze Now</button>
+        </form>
+    </div>
+
+    <!-- Compare Section -->
+    <div class="card">
+        <h3>⚖️ Compare Datasets</h3>
+        <p class="mb-2" style="color: var(--color-text-muted);">Upload two RIS files to identify overlapping references,
+            unique entries, and merge conflicts.</p>
+
+        <form action="/compare" method="post" enctype="multipart/form-data">
+            <div class="mb-2">
+                <label for="file_a">Source A (Primary)</label>
+                <input type="file" id="file_a" name="file_a" accept=".ris" required>
+            </div>
+
+            <div class="mb-2">
+                <label for="file_b">Source B (Secondary)</label>
+                <input type="file" id="file_b" name="file_b" accept=".ris" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Compare Files</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

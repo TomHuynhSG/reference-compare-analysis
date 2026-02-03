@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# IDE / Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Temporary files
+*.log
+*.tmp
+temp/
+
+# Data
+*.ris
+tests/*.ris
+!tests/sample_a.ris
+!tests/sample_b.ris

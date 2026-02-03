@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIS Reference Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="container flex justify-between items-center mt-2">
+        <a href="/">
+            <h1>RefAnalysis</h1>
+        </a>
+        <nav class="flex">
+            <a href="/" class="btn">Home</a>
+            <!-- Could add more nav items here -->
+        </nav>
+    </header>
+
+    <main class="container mt-2 mb-2">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center mt-4 mb-2" style="color: var(--color-text-muted);">
+        <p>&copy; 2024 Research Tools Inc.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

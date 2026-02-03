@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-2 flex justify-between items-center">
+    <h2>Analysis Report: <span style="color: var(--color-primary)">{{ filename }}</span></h2>
+    <a href="/" class="btn" style="background: var(--color-surface); border: 1px solid var(--color-text-muted);">←
+        Back</a>
+</div>
+
+<!-- Stats Overview -->
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="card text-center">
+        <h4 style="color: var(--color-text-muted)">Total References</h4>
+        <h1 style="margin: 0;">{{ stats.total_references }}</h1>
+    </div>
+    <div class="card text-center">
+        <h4 style="color: var(--color-text-muted)">Unique Authors</h4>
+        <h2 style="margin: 0;">{{ stats.top_authors|length }}</h2>
+    </div>
+    <div class="card text-center">
+        <h4 style="color: var(--color-text-muted)">Journals</h4>
+        <h2 style="margin: 0;">{{ stats.top_journals|length }}</h2>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-2 mt-2">
+    <div class="card">
+        <h3>Publications over Time</h3>
+        <canvas id="yearsChart"></canvas>
+    </div>
+    <div class="card">
+        <h3>Top Authors</h3>
+        <canvas id="authorsChart"></canvas>
+    </div>
+</div>
+
+<!-- Detailed List -->
+<div class="card mt-2">
+    <h3>Reference List</h3>
+    <p class="mb-2" style="color: var(--color-text-muted); font-size: 0.9rem;">Click headers to sort</p>
+
+    <div class="table-container">
+        <table id="refTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Type</th>
+                    <th onclick="sortTable(1)">Year</th>
+                    <th onclick="sortTable(2)">Title</th>
+                    <th onclick="sortTable(3)">Authors</th>
+                    <th onclick="sortTable(4)">Journal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in records %}
+                <tr>
+                    <td>{{ row.get('type_of_reference', 'UNK') }}</td>
+                    <td>{{ row.get('year', row.get('py', 'N/A')) }}</td>
+                    <td style="font-weight: 500;">
+                        {{ row.get('title', row.get('primary_title', row.get('ti', 'No Title'))) }}
+                        {% if row.get('doi') or row.get('do') %}
+                        <br>
+                        <a href="https://doi.org/{{ row.get('doi', row.get('do')) }}" target="_blank"
+                            style="font-size: 0.8rem; opacity: 0.7;">DOI ↗</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set authors = row.get('authors', row.get('au', [])) %}
+                        {% if authors is sequence and authors is not string %}
+                        {{ authors[:3]|join(', ') }}{% if authors|length > 3 %} et al.{% endif %}
+                        {% else %}
+                        {{ authors }}
+                        {% endif %}
+                    </td>
+                    <td>{{ row.get('journal_name', row.get('t2', row.get('jo', ''))) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Prepare Data for Charts
+    const yearsData = {{ stats.years_distribution| tojson }};
+    const authorsData = {{ stats.top_authors| tojson }};
+
+    // Years Chart
+    new Chart(document.getElementById('yearsChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(yearsData),
+            datasets: [{
+                label: 'Publications',
+                data: Object.values(yearsData),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { grid: { color: 'rgba(255,255,255,0.1)' } } }
+        }
+    });
+
+    // Authors Chart
+    new Chart(document.getElementById('authorsChart'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(authorsData),
+            datasets: [{
+                data: Object.values(authorsData),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'right', labels: { color: 'white', boxWidth: 10 } }
+            }
+        }
+    });
+</script>
+{% endblock %}
