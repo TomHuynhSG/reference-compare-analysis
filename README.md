@@ -4,26 +4,25 @@
 
 A powerful, modular, and user-friendly web application for analyzing and comparing RIS citation files. Built with Flask and designed with a premium, responsive UI.
 
-## 🚀 Key Features
+## ✨ Features
 
-### 1. 📊 Advanced Analysis
-Upload individual RIS files to get instant insights:
-*   **Statistics Dashboard**: View total references, unique authors, and journal counts.
-*   **Visualizations**: Interactive charts for publications over time and top authors.
-*   **Smart Table**: A sortable, responsive table displaying all references:
-    *   **DOI Links**: Direct access to the source.
-    *   **Abstracts**: [New] Click "View" to read full abstracts in a popup modal.
-
-### 2. ⚖️ Intelligent Comparison
-Compare two RIS datasets (Source A vs. Source B) to handle deduplication and merging:
-*   **Interactive Venn Diagram**: [New] Visualize the overlap and unique sets with an SVG-based interactive diagram showing counts and percentages.
-*   **Detailed Comparison Tables**: Three distinct lists (Overlap, Unique A, Unique B) with full metadata including **Type** and **Abstract**.
-*   **Conflict Resolution Support**: Helps researchers merge libraries without duplicates.
-
-### 3. 🎨 Premium Experience
-*   **Modern Design**: Dark mode aesthetic with glassmorphism elements, deep gradients, and interactive animations.
-*   **Responsive**: Optimized layout with maximized screen real estate.
-*   **Fast**: Built with lightweight Vanilla CSS and optimized Python logic.
+*   **🔍 Single File Analysis**: Upload a `.ris` file to view:
+    *   Total references, year distribution, top authors, and top journals.
+    *   Interactive charts (publications over time, top contributors).
+    *   Sortable, interactive reference table with abstract previews.
+*   **⚖️ Dataset Comparison**: Upload two RIS files (A and B) for side-by-side comparison:
+    *   **Overlap**: References found in both A and B.
+    *   **Unique to A** / **Unique to B**: Identify entries exclusive to each dataset.
+    *   Visual **Venn diagram** for at-a-glance overlap visualization.
+    *   Interactive sortable tables for each subset (overlap, unique A, unique B).
+*   **🔄 Multi-File Deduplication** 🆕: Upload multiple RIS files at once:
+    *   Automatically removes duplicates across all files.
+    *   **Unique References Table**: Shows final deduplicated list with source tracking.
+    *   **Removed Duplicates Table**: Displays which duplicates were removed and from which files.
+    *   Export either table as RIS format.
+    *   Source tracking shows which files each reference appears in.
+*   **📥 RIS Export**: Export overlap, unique sets, or deduplicated data as valid `.ris` files for use in other tools (EndNote, Zotero, Mendeley).
+*   **🎨 Modern UI**: Glassmorphism design, vibrant gradients, smooth animations for a premium user experience.
 
 ## 🧠 Technical Deep Dive: Enhanced Matching Strategy
 

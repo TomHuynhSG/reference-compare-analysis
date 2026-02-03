@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 from src.parser import parse_ris_file, entries_to_df
 from src.analyzer import analyze_references
 from src.comparator import compare_datasets
+from src.deduplicator import deduplicate_multiple_files, get_deduplication_stats
+from src.exporter import export_to_ris_string
 import os
 
 app = Flask(__name__)
@@ -132,6 +134,118 @@ def export_ris():
         mimetype="application/x-research-info-systems",
         headers={"Content-Disposition": f"attachment;filename={export_filename}"}
     )
+
+
+@app.route('/deduplicate', methods=['POST'])
+def deduplicate():
+    """
+    Handle multi-file deduplication.
+    Upload multiple RIS files and remove duplicates across all files.
+    """
+    # Get all uploaded files
+    files = request.files.getlist('ris_files')
+    
+    if not files or all(f.filename == '' for f in files):
+        return redirect(url_for('index'))
+    
+    # Parse all files
+    file_data_list = []
+    filenames = []
+    
+    for file in files:
+        if file.filename == '':
+            continue
+            
+        # Save file for potential re-export
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filepath)
+        
+        # Parse file
+        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            entries = parse_ris_file(f.read())
+            df = entries_to_df(entries)
+            
+        if not df.empty:
+            file_data_list.append((file.filename, df))
+            filenames.append(file.filename)
+    
+    if not file_data_list:
+        return redirect(url_for('index'))
+    
+    # Perform deduplication
+    unique_refs, duplicates = deduplicate_multiple_files(file_data_list)
+    
+    # Calculate statistics
+    stats = get_deduplication_stats(unique_refs, duplicates, file_data_list)
+    
+    return render_template(
+        'deduplicate.html',
+        unique_refs=unique_refs,
+        duplicates=duplicates,
+        stats=stats,
+        filenames=filenames
+    )
+
+
+@app.route('/export_dedup/<table_type>', methods=['POST'])
+def export_dedup(table_type):
+    """
+    Export deduplication results (either unique or duplicates table).
+    
+    Args:
+        table_type: 'unique' or 'duplicates'
+    """
+    # Re-process files from uploads folder
+    filenames = request.form.getlist('filenames')
+    
+    if not filenames:
+        return redirect(url_for('index'))
+    
+    # Reload and re-deduplicate
+    file_data_list = []
+    for filename in filenames:
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        if not os.path.exists(filepath):
+            continue
+            
+        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            entries = parse_ris_file(f.read())
+            df = entries_to_df(entries)
+            
+        if not df.empty:
+            file_data_list.append((filename, df))
+    
+    unique_refs, duplicates = deduplicate_multiple_files(file_data_list)
+    
+    # Select export data based on type
+    if table_type == 'unique':
+        export_data = unique_refs
+        export_filename = 'unique_references.ris'
+    else:  # duplicates
+        export_data = duplicates
+        export_filename = 'removed_duplicates.ris'
+    
+    # Clean up metadata fields before export
+    clean_data = []
+    for ref in export_data:
+        clean_ref = ref.copy()
+        # Remove deduplication metadata
+        clean_ref.pop('source_file', None)
+        clean_ref.pop('appears_in', None)
+        clean_ref.pop('occurrence_count', None)
+        clean_ref.pop('duplicate_of', None)
+        clean_ref.pop('all_sources', None)
+        clean_data.append(clean_ref)
+    
+    ris_content = export_to_ris_string(clean_data)
+    
+    return Response(
+        ris_content,
+        mimetype="application/x-research-info-systems",
+        headers={"Content-Disposition": f"attachment;filename={export_filename}"}
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

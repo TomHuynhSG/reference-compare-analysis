@@ -44,4 +44,22 @@
         </form>
     </div>
 </div>
+
+<!-- Deduplicate Section (Full Width) -->
+<div class="card mt-2">
+    <h3>🔄 Multi-File Deduplication <span
+            style="background: var(--color-primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">NEW</span>
+    </h3>
+    <p class="mb-2" style="color: var(--color-text-muted);">Upload multiple RIS files to remove duplicates across all
+        files. View unique references and removed duplicates with source tracking.</p>
+
+    <form action="/deduplicate" method="post" enctype="multipart/form-data">
+        <label for="ris_files">Upload Multiple RIS Files</label>
+        <input type="file" id="ris_files" name="ris_files" accept=".ris" multiple required>
+        <p style="font-size: 14px; color: var(--color-text-muted); margin-top: 0.5rem;">
+            💡 Tip: Hold Ctrl (Windows) or Cmd (Mac) to select multiple files
+        </p>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Deduplicate Now</button>
+    </form>
+</div>
 {% endblock %}
