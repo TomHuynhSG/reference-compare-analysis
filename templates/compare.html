@@ -13,8 +13,7 @@
     <div class="card text-center" style="border-top: 4px solid var(--color-primary)">
         <h4 style="color: var(--color-primary)">Unique to A</h4>
         <h1 style="margin: 0;">{{ stats.unique_a_count }}</h1>
-        <small style="color: var(--color-text-muted)">{{ (stats.unique_a_count / stats.total_a * 100)|round(1) }}% of
-            A</small>
+        <small style="color: var(--color-text-muted)">{{ (stats.unique_a_count / stats.total_a * 100)|round(1) }}% of A / {{ stats.total_a }}</small>
         <div class="mt-1">
             <a href="{{ url_for('export_ris', filename_a=filename_a, filename_b=filename_b, subset='unique_a') }}"
                 class="btn"
@@ -38,8 +37,7 @@
     <div class="card text-center" style="border-top: 4px solid var(--color-secondary)">
         <h4 style="color: var(--color-secondary)">Unique to B</h4>
         <h1 style="margin: 0;">{{ stats.unique_b_count }}</h1>
-        <small style="color: var(--color-text-muted)">{{ (stats.unique_b_count / stats.total_b * 100)|round(1) }}% of
-            B</small>
+        <small style="color: var(--color-text-muted)">{{ (stats.unique_b_count / stats.total_b * 100)|round(1) }}% of B / {{ stats.total_b }}</small>
         <div class="mt-1">
             <a href="{{ url_for('export_ris', filename_a=filename_a, filename_b=filename_b, subset='unique_b') }}"
                 class="btn"
@@ -59,14 +57,13 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const stats = {
-            unique_a_count: {{ stats.unique_a_count }
-    },
-        overlap_count: {{ stats.overlap_count }},
-        unique_b_count: {{ stats.unique_b_count }},
-        total_a: {{ stats.total_a }},
-        total_b: {{ stats.total_b }}
+            unique_a_count: {{ stats.unique_a_count }},
+            overlap_count: {{ stats.overlap_count }},
+            unique_b_count: {{ stats.unique_b_count }},
+            total_a: {{ stats.total_a }},
+            total_b: {{ stats.total_b }}
         };
-    drawVennDiagram("venn-container", stats, "{{ filename_a }}", "{{ filename_b }}");
+        drawVennDiagram("venn-container", stats, "{{ filename_a }}", "{{ filename_b }}");
     });
 </script>
 
