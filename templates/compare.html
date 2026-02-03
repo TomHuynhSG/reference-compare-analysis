@@ -68,14 +68,14 @@
 <div class="mt-2">
     <div class="card mb-2">
         <h3 style="color: var(--color-accent)">🔗 Overlap ({{ stats.overlap_count }})</h3>
-        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+        <div class="table-container" style="max-height: 500px; overflow-y: auto;">
             <table id="overlapTable">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0, 'overlapTable')">Title</th>
-                        <th onclick="sortTable(1, 'overlapTable')">Year</th>
-                        <th onclick="sortTable(2, 'overlapTable')">Type</th>
-                        <th onclick="sortTable(3, 'overlapTable')">Authors</th>
+                        <th onclick="sortTable(0, 'overlapTable')" style="cursor: pointer;">Title ⇅</th>
+                        <th onclick="sortTable(1, 'overlapTable')" style="cursor: pointer;">Year ⇅</th>
+                        <th onclick="sortTable(2, 'overlapTable')" style="cursor: pointer;">Type ⇅</th>
+                        <th onclick="sortTable(3, 'overlapTable')" style="cursor: pointer;">Authors ⇅</th>
                         <th>Abstract</th>
                     </tr>
                 </thead>
@@ -117,9 +117,9 @@
                 <table id="uniqueATable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0, 'uniqueATable')">Title</th>
-                            <th onclick="sortTable(1, 'uniqueATable')">Year</th>
-                            <th onclick="sortTable(2, 'uniqueATable')">Type</th>
+                            <th onclick="sortTable(0, 'uniqueATable')" style="cursor: pointer;">Title ⇅</th>
+                            <th onclick="sortTable(1, 'uniqueATable')" style="cursor: pointer;">Year ⇅</th>
+                            <th onclick="sortTable(2, 'uniqueATable')" style="cursor: pointer;">Type ⇅</th>
                             <th>Abstract</th>
                         </tr>
                     </thead>
@@ -152,9 +152,9 @@
                 <table id="uniqueBTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0, 'uniqueBTable')">Title</th>
-                            <th onclick="sortTable(1, 'uniqueBTable')">Year</th>
-                            <th onclick="sortTable(2, 'uniqueBTable')">Type</th>
+                            <th onclick="sortTable(0, 'uniqueBTable')" style="cursor: pointer;">Title ⇅</th>
+                            <th onclick="sortTable(1, 'uniqueBTable')" style="cursor: pointer;">Year ⇅</th>
+                            <th onclick="sortTable(2, 'uniqueBTable')" style="cursor: pointer;">Type ⇅</th>
                             <th>Abstract</th>
                         </tr>
                     </thead>

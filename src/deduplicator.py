@@ -79,10 +79,10 @@ def deduplicate_multiple_files(file_data_list):
     for ref in unique_refs + duplicates:
         ref.pop('match_key', None)
     
-    # Sort results
+    # Sort results - convert year to string to avoid TypeError with mixed types
     unique_refs.sort(key=lambda x: (
-        x.get('year') or x.get('py') or '0000',
-        x.get('title') or x.get('ti') or ''
+        str(x.get('year') or x.get('py') or '0000'),
+        str(x.get('title') or x.get('ti') or '')
     ), reverse=True)
     
     duplicates.sort(key=lambda x: x.get('source_file', ''))
