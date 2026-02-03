@@ -1,5 +1,7 @@
 # RIS Reference Compare and Analysis System
 
+![Reference Analysis Homepage](screenshots/homepage.png)
+
 A powerful, modular, and user-friendly web application for analyzing and comparing RIS citation files. Built with Flask and designed with a premium, responsive UI.
 
 ## 🚀 Key Features
