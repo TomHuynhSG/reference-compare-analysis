@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, Response
+from flask import Flask, render_template, request, redirect, url_for, Response, session
 from src.parser import parse_ris_file, entries_to_df
 from src.analyzer import analyze_references
 from src.comparator import compare_datasets
 from src.deduplicator import deduplicate_multiple_files, get_deduplication_stats
 from src.exporter import export_to_ris_string
+from src.search_engine import search_references
 import os
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # Needed for session or flash messages if used
@@ -247,5 +249,156 @@ def export_dedup(table_type):
     )
 
 
+@app.route('/search', methods=['POST'])
+def search():
+    """
+    Handle initial search query with file upload.
+    Parse RIS file, execute search, and store file in session for re-querying.
+    """
+    if 'ris_file' not in request.files:
+        return redirect(url_for('index'))
+    
+    file = request.files['ris_file']
+    query = request.form.get('query', '').strip()
+    fields = request.form.getlist('fields')  # List of selected fields
+    
+    if file.filename == '' or not query:
+        return redirect(url_for('index'))
+    
+    if not fields:
+        fields = ['title', 'abstract']  # Default fields
+    
+    # Generate unique ID for this search session
+    search_id = str(uuid.uuid4())
+    
+    # Save file for re-querying
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"search_{search_id}_{file.filename}")
+    file.save(filepath)
+    
+    # Parse RIS file
+    with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        entries = parse_ris_file(f.read())
+    
+    df = entries_to_df(entries)
+    
+    # Execute search
+    matched_refs, unmatched_refs, stats = search_references(df, query, fields)
+    
+    # Store in session for re-querying
+    session['search_file_id'] = search_id
+    session['search_filename'] = file.filename
+    session['search_filepath'] = filepath
+    
+    return render_template(
+        'search.html',
+        matched_refs=matched_refs,
+        unmatched_refs=unmatched_refs,
+        stats=stats,
+        query=query,
+        fields=fields,
+        filename=file.filename
+    )
+
+
+@app.route('/search/requery', methods=['POST'])
+def search_requery():
+    """
+    Re-search with new query using cached file from session.
+    """
+    query = request.form.get('query', '').strip()
+    fields = request.form.getlist('fields')
+    
+    # Get cached file from session
+    search_filepath = session.get('search_filepath')
+    search_filename = session.get('search_filename')
+    
+    if not search_filepath or not os.path.exists(search_filepath):
+        # Session expired or file deleted, redirect to home
+        return redirect(url_for('index'))
+    
+    if not query:
+        return redirect(url_for('index'))
+    
+    if not fields:
+        fields = ['title', 'abstract']
+    
+    # Re-parse file (could be optimized with caching)
+    with open(search_filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        entries = parse_ris_file(f.read())
+    
+    df = entries_to_df(entries)
+    
+    # Execute new search
+    matched_refs, unmatched_refs, stats = search_references(df, query, fields)
+    
+    return render_template(
+        'search.html',
+        matched_refs=matched_refs,
+        unmatched_refs=unmatched_refs,
+        stats=stats,
+        query=query,
+        fields=fields,
+        filename=search_filename
+    )
+
+
+@app.route('/export_search')
+def export_search():
+    """
+    Export search results (matched or unmatched references) as RIS.
+    """
+    subset = request.args.get('subset')  # 'matched' or 'unmatched'
+    query = request.args.get('query', '')
+    fields_str = request.args.get('fields', 'title,abstract')
+    fields = fields_str.split(',') if fields_str else ['title', 'abstract']
+    
+    # Get cached file from session
+    search_filepath = session.get('search_filepath')
+    search_filename = session.get('search_filename', 'export.ris')
+    
+    if not search_filepath or not os.path.exists(search_filepath):
+        return "Session expired. Please re-upload your file.", 404
+    
+    # Re-execute search
+    with open(search_filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        entries = parse_ris_file(f.read())
+    
+    df = entries_to_df(entries)
+    matched_refs, unmatched_refs, stats = search_references(df, query, fields)
+    
+    # Select export data
+    if subset == 'matched':
+        export_data = matched_refs
+        export_filename = f"matched_{search_filename}"
+    else:
+        export_data = unmatched_refs
+        export_filename = f"unmatched_{search_filename}"
+    
+    # Clean up search-specific metadata
+    clean_data = []
+    for ref in export_data:
+        clean_ref = ref.copy()
+        clean_ref.pop('title_highlighted', None)
+        clean_ref.pop('ti_highlighted', None)
+        clean_ref.pop('abstract_highlighted', None)
+        clean_ref.pop('ab_highlighted', None)
+        clean_ref.pop('n2_highlighted', None)
+        clean_ref.pop('matched_terms', None)
+        clean_ref.pop('match_count', None)
+        clean_data.append(clean_ref)
+    
+    if not export_filename.endswith('.ris'):
+        export_filename += '.ris'
+    
+    ris_content = export_to_ris_string(clean_data)
+    
+    return Response(
+        ris_content,
+        mimetype="application/x-research-info-systems",
+        headers={"Content-Disposition": f"attachment;filename={export_filename}"}
+    )
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
