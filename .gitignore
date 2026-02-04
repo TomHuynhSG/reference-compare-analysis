@@ -23,3 +23,6 @@ temp/
 tests/*.ris
 !tests/sample_a.ris
 !tests/sample_b.ris
+
+# Search Results
+search_*.txt

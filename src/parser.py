@@ -62,10 +62,31 @@ def parse_ris_lines(lines):
             # Continuation line (rare but possible, or malformed)
             # If we strictly valid RIS, we might ignore, but let's append to last tag if reasonable
             if last_tag and current_entry:
+                # Update the raw tag
                 if isinstance(current_entry[last_tag], list):
                     current_entry[last_tag][-1] += " " + line
                 else:
                     current_entry[last_tag] += " " + line
+                
+                # Also update corresponding mapped fields if they exist
+                # Define mapping from raw tags to mapped field names
+                tag_map = {
+                    'ti': 'title', 't1': 'title',
+                    'ab': 'abstract', 'n2': 'abstract',
+                    'py': 'year', 'y1': 'year',
+                    'jo': 'journal_name', 't2': 'journal_name',
+                    'do': 'doi'
+                }
+                
+                if last_tag in tag_map:
+                    mapped_field = tag_map[last_tag]
+                    if mapped_field in current_entry:
+                        # Append to the mapped field too
+                        if isinstance(current_entry[mapped_field], list):
+                             # This shouldn't happen for title/abstract but good for safety
+                            current_entry[mapped_field][-1] += " " + line
+                        else:
+                            current_entry[mapped_field] += " " + line
 
     if current_entry:
         entries.append(current_entry)
