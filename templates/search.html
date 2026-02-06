@@ -93,7 +93,7 @@
 <div class="card mt-2">
     <h3 style="color: var(--color-accent)">✅ Matched References ({{ stats.matched_count }})</h3>
     {% if stats.matched_count > 0 %}
-    <div class="table-container" style="max-height: 600px; overflow-y: auto;">
+    <div class="table-container" style="max-height: 800px; overflow-y: auto;">
         <table id="matchedTable">
             <thead>
                 <tr>
@@ -169,7 +169,7 @@
     
     <div id="unmatchedSection" style="display: none; margin-top: 1rem;">
         {% if stats.unmatched_count > 0 %}
-        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+        <div class="table-container" style="max-height: 600px; overflow-y: auto;">
             <table id="unmatchedTable">
                 <thead>
                     <tr>
